@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="f4ct0r&#39;s Universe">
+    <meta name="keywords" content="Pod扩容缩容, f4ct0r&#39;s Universe">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>f4ct0r&#39;s Universe</title>
+    <title>Pod扩容缩容 | f4ct0r&#39;s Universe</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -194,12 +194,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/covers/kubernetes.jpeg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title"></h1>
+                    <h1 class="description center-align post-title">Pod扩容缩容</h1>
                 </div>
             </div>
         </div>
@@ -313,12 +313,29 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/kubernetes/">
+                                <span class="chip bg-color">kubernetes</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/middleware/" class="post-category">
+                                middleware
+                            </a>
+                        
+                            <a href="/categories/middleware/kubernetes/" class="post-category">
+                                kubernetes
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -336,14 +353,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    21
+                    626
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    2 分
                 </div>
                 
 
@@ -363,7 +380,39 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>title: 404<br>date: 1654389418196<br>type: “404”<br>layout: “404”<br>description: “Oops～，你找的页面被送往其他星球了:(“</p>
+                <p>由于在实际的环境里，很多服务可能会面临由于业务扩展，原来的服务处理能力不够或者面临突发性的大量访问的场景，这就需要对现有的业务进行扩容。也有可能由于资源紧张或者架构调整负载降低等场景，需要对现有业务进行缩容。面对这些场景可以使用Deployment&#x2F;RC的Scale机制来处理。</p>
+<p>Kubernetes对Pod的扩缩容提供了两种模式，手动和自动扩缩容。手动模式是通过手动调用kubectl scale命令对一个Deployment&#x2F;RC的Pod来进行副本的设置。自动模式是通过用户指定的某个性能指标或者自定义业务指标的策略来对Pod数量进行调整。</p>
+<h2 id="手动扩缩容"><a href="#手动扩缩容" class="headerlink" title="手动扩缩容"></a>手动扩缩容</h2><p>在有的场景中，需要预先对业务服务进行扩缩容，而当前的系统资源并未达到可以自动扩缩容的状态，这个时候就只能通过手动模式来进行。</p>
+<p>以下是Deployment对象的配置文件，可以通过该文件创建一个Deployment对象，在该文件中创建的Pod副本数为3</p>
+<pre class=" language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> extensions/v1beta1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> frontend                                         <span class="token comment" spellcheck="true">#Deployment对象的名称</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">3                                            </span><span class="token comment" spellcheck="true">#生成的副本数量</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">tier</span><span class="token punctuation">:</span> frontend                                     <span class="token comment" spellcheck="true">#选择器选择的标签，匹配副本的Label字段</span>
+    <span class="token key atrule">matchExpressions</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token punctuation">{</span><span class="token key atrule">key</span><span class="token punctuation">:</span> tier<span class="token punctuation">,</span> <span class="token key atrule">operator</span><span class="token punctuation">:</span> In<span class="token punctuation">,</span> <span class="token key atrule">values</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>frontend<span class="token punctuation">]</span><span class="token punctuation">}</span>    <span class="token comment" spellcheck="true">#Key-Value形式对标签进行匹配</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">tier</span><span class="token punctuation">:</span> frontend                                   <span class="token comment" spellcheck="true">#副本所打上的标签</span>
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> nginx
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> docker.io/nginx<span class="token punctuation">:</span>1.14.0                    <span class="token comment" spellcheck="true">#Pod所使用的镜像</span>
+          <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">containerPort</span><span class="token punctuation">:</span> <span class="token number">80                              </span><span class="token comment" spellcheck="true">#容器所暴露的端口</span>
+</code></pre>
+<p>通过使用kubectl create -f nginx-deploy.yaml来创建一个Deployment对象</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8pp6"><img src="https://s1.ax1x.com/2022/06/05/Xw8pp6.png" alt="terminal-1.png"></a></p>
+<p>假如现在需要对Pod进行扩容，可以手动调用kubectl scale deployment frontend –replicas 5来扩容，将副本数量增加到5个</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8Fne"><img src="https://s1.ax1x.com/2022/06/05/Xw8Fne.png" alt="terminal-2.png"></a></p>
+<p>如果需要缩容，将replicas的值减少即可</p>
+<h2 id="自动扩缩容"><a href="#自动扩缩容" class="headerlink" title="自动扩缩容"></a>自动扩缩容</h2><p>从Kubernetes 1.1版本开始，就新增了Horizontal Pod AutoScaler(HPA)的控制器，用于实现基于CPU使用率来进行自动Pod扩缩容的功能。HPA控制器基于Master的kube-controller-manager服务启动参数–horizontal-pod-autoscaler-sync-period定义的时长（默认30s）来周期性的监测目标Pod的CPU使用率，并在满足条件的时候对RC&#x2F;Deployment的副本数量进行调整，以符合用户定义的平均Pod CPU的使用率。需要安装Heapster。</p>
+<p>更多关于HPA的说明可以参考<a href="https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Kubernetes%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/">Kubernetes概念解释</a></p>
 
                 
             </div>
@@ -390,7 +439,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://blog.f4ct0r.top/404.html">https://blog.f4ct0r.top/404.html</a>
+                    <a href="https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Pod%E6%89%A9%E5%AE%B9%E7%BC%A9%E5%AE%B9/">https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Pod%E6%89%A9%E5%AE%B9%E7%BC%A9%E5%AE%B9/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -427,7 +476,11 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/kubernetes/">
+                                    <span class="chip bg-color">kubernetes</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -469,39 +522,52 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/404.html">
+                <a href="/2022/06/05/middleware/kubernetes/Pod%E5%8D%87%E7%BA%A7%E5%92%8C%E5%9B%9E%E6%BB%9A/">
                     <div class="card-image">
                         
+                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Pod升级和回滚">
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
+                        <span class="card-title">Pod升级和回滚</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            Pod的扩缩容
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-05
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-06-05
+                        </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            f4ct0r
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/middleware/" class="post-category">
+                                    middleware
+                                </a>
+                            
+                            <a href="/categories/middleware/kubernetes/" class="post-category">
+                                    kubernetes
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
-
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/kubernetes/">
+                        <span class="chip bg-color">kubernetes</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
@@ -509,22 +575,21 @@
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/404.html">
+                <a href="/2022/06/05/middleware/kubernetes/Pod%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E3%80%81%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5%E5%92%8C%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5/">
                     <div class="card-image">
                         
+                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Pod的生命周期、重启策略和健康检查">
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
+                        <span class="card-title">Pod的生命周期、重启策略和健康检查</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            介绍Pod的生命周期、重启策略及健康检查
                         
                     </div>
                     <div class="publish-info">
@@ -533,13 +598,28 @@
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            f4ct0r
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/middleware/" class="post-category">
+                                    middleware
+                                </a>
+                            
+                            <a href="/categories/middleware/kubernetes/" class="post-category">
+                                    kubernetes
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
-
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/kubernetes/">
+                        <span class="chip bg-color">kubernetes</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>

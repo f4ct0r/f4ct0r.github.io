@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="f4ct0r&#39;s Universe">
+    <meta name="keywords" content="Kubernetes CA签名的双向认证, f4ct0r&#39;s Universe">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>f4ct0r&#39;s Universe</title>
+    <title>Kubernetes CA签名的双向认证 | f4ct0r&#39;s Universe</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -194,12 +194,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/covers/kubernetes.jpeg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title"></h1>
+                    <h1 class="description center-align post-title">Kubernetes CA签名的双向认证</h1>
                 </div>
             </div>
         </div>
@@ -313,12 +313,29 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/kubernetes/">
+                                <span class="chip bg-color">kubernetes</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/middleware/" class="post-category">
+                                middleware
+                            </a>
+                        
+                            <a href="/categories/middleware/kubernetes/" class="post-category">
+                                kubernetes
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -336,14 +353,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    21
+                    1.4k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    6 分
                 </div>
                 
 
@@ -363,7 +380,255 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>title: 404<br>date: 1654389418196<br>type: “404”<br>layout: “404”<br>description: “Oops～，你找的页面被送往其他星球了:(“</p>
+                <p>在一个安全的内网环境中，Kubernetes的各个组件可以通过apiserver提供的非安全端口8080进行通信。但是如果涉及到apiserver需要对外提供服务或者容器需要调用apiserver获取集群中的信息，更安全的做法是使用HTTPS的安全机制。Kubernetes提供了基于CA签名的双向认证及基于HTTP Base或Token的认证方式，其中基于CA证书的安全系数最高。</p>
+<h2 id="Master节点"><a href="#Master节点" class="headerlink" title="Master节点"></a>Master节点</h2><h3 id="kube-apiserver配置"><a href="#kube-apiserver配置" class="headerlink" title="kube-apiserver配置"></a>kube-apiserver配置</h3><p>首先在master上生成apiserver需要用到的CA证书及服务器公私钥，这里需要保证CA证书的Comman Name和hostname一致，否则证书会认证失败</p>
+<p>并且CA证书在使用的过程中，需要预先安装在系统中，使系统信任该证书</p>
+<pre class=" language-shell"><code class="language-shell">openssl genrsa -out ca.key 2048
+openssl req -x509 -new -nodes -key ca.key -subj "/CN=k8s-master" -days 5000 -out ca.crt
+yum install ca-certificates -y
+update-ca-trust force-enable
+cp ca.crt /etc/pki/ca-trust/source/anchors/
+update-ca-trust extract
+</code></pre>
+<p>为master生成公私钥时，需要准备master_ssl.cnf文件，该文件用于x509 v3版本的证书。在该文件中主要设置master的hostname、IP地址及Kubernetes Master Service的虚拟服务名称（kubernetes.default等）和该虚拟服务的ClusterIP地址。其中alt_names下面的键值对必须要有，否则会出现SAN错误的问题。</p>
+<pre class=" language-text"><code class="language-text">[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+[req_distinguished_name]
+[v3_req]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = kubernetes
+DNS.2 = kubernetes.default
+DNS.3 = kubernetes.default.svc
+DNS.4 = kubernetes.default.svc.cluster.local
+DNS.5 = k8s-master
+IP.1 = 169.169.0.1
+IP.2 = 10.0.83.61
+</code></pre>
+<pre class=" language-shell"><code class="language-shell">openssl genrsa -out server.key 2048
+openssl req -new -key server.key -subj "/CN=k8s-master" -config master_ssl.cnf -out server.csr
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -days 5000 -extensions v3_req -extfile master_ssl.cnf -out server.crt
+</code></pre>
+<p>而在kube-apiserver的配置文件中需要通过–client-ca-file, –tls-private-key, –tls-cert-file三个参数指定CA证书，服务端私钥，服务端公钥<br>kube-api.conf</p>
+<pre class=" language-text"><code class="language-text">ETCD_SERVER="--etcd-servers=http://127.0.0.1:2379"
+INSECURE_BIND_ADDRESS="--insecure-bind-address=0.0.0.0"
+INSECURE_PORT="--insecure-port=8080"
+SECURE_PORT="--secure-port=6443"
+SERVICE_CLUSTER_IP_RANGE="--service-cluster-ip-range=169.169.0.0/16"
+SERVICE_NODE_PORT_RANGE="--service-node-port-range=1-65535"
+ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota"
+LOGTOSTDERR="--logtostderr=false"
+LOGDIR="--log-dir=/var/log/kubernetes"
+LOG_LEVEL="--v=4"
+CLIENT_CA_FILE="--client-ca-file=/etc/kubernetes/ca.crt"
+TLS_PRIVATE_KEY="--tls-private-key=/etc/kubernetes/server.key"
+TLS_CERT_FILE="--tls-cert-file=/etc/kubernetes/server.crt"
+KUBE_API_ARGS=""
+</code></pre>
+<p><em>kube-api.service:</em></p>
+<pre class=" language-text"><code class="language-text">[Unit]
+Description=kube api server
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+EnvironmentFile=/etc/kubernetes/apiserver
+ExecStart=/usr/bin/kube-apiserver \
+          $ETCD_SERVER \
+          $INSECURE_BIND_ADDRESS \
+          $INSECURE_PORT \
+          $SECURE_PORT \
+          $SERVICE_CLUSTER_IP_RANGE \
+          $SERVICE_NODE_PORT_RANGE \
+          $ADMISSION_CONTROL \
+          $LOGTOSTDERR \
+          $LOGDIR \
+          $LOG_LEVEL \
+          $CLIENT_CA_FILE \
+          $TLS_PRIVATE_KEY \
+          $TLS_CERT_FILE \
+          $KUBE_API_ARGS
+Restart=on=failure
+Type=notify
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<h3 id="kube-controller-manager配置"><a href="#kube-controller-manager配置" class="headerlink" title="kube-controller-manager配置"></a>kube-controller-manager配置</h3><p>由于是双向认证，所以对kube-controller-manager这个客户端来说，也需要生成对应的公私钥，而公钥需要被服务端识别则通过CA证书</p>
+<pre class=" language-shell"><code class="language-shell">openssl genrsa -out cs_client.key 2048
+openssl req -new -key cs_client.key -subj "/CN=k8s-master" -out cs_client.csr
+openssl x509 -req -in cs_client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -days 5000 -out cs_client.crt
+</code></pre>
+<p>在kube-controller-manager需要调用的配置文件中，也需要指定client-certificate, client-key, certificate-authority</p>
+<p><em>kube-controller-manager.yaml:</em></p>
+<pre class=" language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Config
+<span class="token key atrule">users</span><span class="token punctuation">:</span>
+<span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> controllermanager
+  <span class="token key atrule">user</span><span class="token punctuation">:</span>
+    <span class="token key atrule">client-certificate</span><span class="token punctuation">:</span> /etc/kubernetes/ssl/cs_client.crt
+    <span class="token key atrule">client-key</span><span class="token punctuation">:</span> /etc/kubernetes/ssl/cs_client.key
+  <span class="token key atrule">clusters</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> local
+    <span class="token key atrule">cluster</span><span class="token punctuation">:</span>
+      <span class="token key atrule">certificate-authority</span><span class="token punctuation">:</span> /etc/kubernetes/ssl/ca.crt
+<span class="token key atrule">contexts</span><span class="token punctuation">:</span>
+<span class="token punctuation">-</span> <span class="token key atrule">context</span><span class="token punctuation">:</span>
+    <span class="token key atrule">cluster</span><span class="token punctuation">:</span> local
+    <span class="token key atrule">user</span><span class="token punctuation">:</span> controllermanager
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>context
+<span class="token key atrule">current-context</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>context
+</code></pre>
+<p>在连接API Server时，由于证书中Comman Name用的是hostname，所以在连接时也需要用hostname来连接</p>
+<pre class=" language-text"><code class="language-text">API_MASTER="--master=https://k8s-master:6443"
+LOGTOSTDERR="--logtostderr=false"
+LOGDIR="--log-dir=/var/log/kubernetes"
+LOG_LEVEL="--v=4"
+SERVICE_ACCOUNT_KEY_FILE="--service-account-private-key-file=/etc/kubernetes/ssl/server.key"
+ROOT_CA_FILE="--root-ca-file=/etc/kubernetes/ssl/ca.crt"
+KUBECONFIG="--kubeconfig=/etc/kubernetes/kubeconfig"
+KUBE_CONTROLLER_MANAGER_ARGS=""
+</code></pre>
+<p><em>kube-controller-manager.service:</em></p>
+<pre class=" language-text"><code class="language-text">[Unit]
+Description=kube controller manager
+After=kube-apiserver.service
+Requires=kube-apiserver.service
+
+[Service]
+EnvironmentFile=/etc/kubernetes/controller-manager
+ExecStart=/usr/bin/kube-controller-manager \
+          $API_MASTER \
+          $LOGTOSTDERR \
+          $LOGDIR \
+          $LOG_LEVEL \
+          $SERVICE_ACCOUNT_KEY_FILE \
+          $ROOT_CA_FILE \
+          $KUBECONFIG \
+          $KUBE_CONTROLLER_MANAGER_ARGS
+Restart=on=failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<h3 id="kube-scheduler配置"><a href="#kube-scheduler配置" class="headerlink" title="kube-scheduler配置"></a>kube-scheduler配置</h3><p>kube-scheduler用到的客户端证书及kubeconfig配置文件，和kube-controller-manager用到的是一致的，所以直接沿用即可</p>
+<pre class=" language-text"><code class="language-text">API_MASTER="--master=https://k8s-master:6443"
+LOGTOSTDERR="--logtostderr=false"
+LOGDIR="--log-dir=/var/log/kubernetes"
+LOG_LEVEL="--v=4"
+KUBECONFIG="--kubeconfig=/etc/kubernetes/kubeconfig"
+KUBE_SCHEDULER_ARGS=""
+</code></pre>
+<p><em>kube-scheduler:</em></p>
+<pre class=" language-text"><code class="language-text">[Unit]
+Description=kube scheduler
+After=kube-apiserver.service
+Requires=kube-apiserver.service
+
+[Service]
+EnvironmentFile=/etc/kubernetes/scheduler
+ExecStart=/usr/bin/kube-scheduler \
+          $API_MASTER \
+          $LOGTOSTDERR \
+          $LOGDIR \
+          $LOG_LEVEL \
+          $KUBECONFIG \
+          $KUBE_SCHEDULER_ARGS
+Restart=on=failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<h2 id="Node节点"><a href="#Node节点" class="headerlink" title="Node节点"></a>Node节点</h2><h3 id="kubelet配置"><a href="#kubelet配置" class="headerlink" title="kubelet配置"></a>kubelet配置</h3><p>Node节点中的CA证书需要和Master节点上的一致，所以需要将CA证书从Master节点复制到Node节点。同样，CA证书在Node节点上也需要安装</p>
+<pre class=" language-shell"><code class="language-shell">yum install ca-certificates -yupdate-ca-trust force-enablecp ca.crt /etc/pki/ca-trust/source/anchors/update-ca-trust extract
+</code></pre>
+<p>然后在生成Node节点需要用于认证和加密的公私钥</p>
+<pre class=" language-shell"><code class="language-shell">openssl genrsa -out kubelet_client.key 2048openssl req -new -key kubelet_client.key -subj "/CN=k8s-master" -out kubelet_client.csropenssl x509 -req -in kubelet_client.csr  -CA ca.crt -CAkey ca.key -CAcreateserial -out kubelet_client.crt -days 5000
+</code></pre>
+<p>通过kubeconfig来指定CA证书的路径及使用的公私钥和API Server的地址</p>
+<pre class=" language-text"><code class="language-text">apiVersion: v1
+users:
+- name: kubelet
+  user:
+    client-certificate: /etc/kubernetes/ssl/kubelet_client.crt
+    client-key: /etc/kubernetes/ssl/kubelet_client.key
+clusters:
+- cluster:
+    certificate-authority: ssl/ca.crt
+    server: https://k8s-master:6443
+  name: local
+contexts:
+- context:
+    cluster: local
+    user: kubelet
+  name: my-context
+current-context: my-context
+kind: Config
+preferences: {}
+</code></pre>
+<pre class=" language-text"><code class="language-text">ADDRESS="--address=10.0.83.63"
+HOSTNAME_OVERRIDE="--hostname-override=10.0.83.63"
+LOGTOSTDERR="--logtostderr=false"
+LOGDIR="--log-dir=/var/log/kubernetes"
+LOG_LEVEL="--v=5"
+KUBECONFIG="--kubeconfig=/etc/kubernetes/kubeconfig"
+KUBELET_ARGS='--cloud-provider=""'
+</code></pre>
+<p><em>kubelet.service:</em></p>
+<pre class=" language-text"><code class="language-text">[Unit]
+Description=kubelet server
+After=docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/var/lib/kubelet
+EnvironmentFile=/etc/kubernetes/kubelet
+ExecStart=/usr/bin/kubelet \
+          $HOSTNAME_OVERRIDE \
+          $LOGTOSTDERR \
+          $LOGDIR \
+          $LOG_LEVEL \
+          $KUBECONFIG \
+          $KUBELET_ARGS
+Restart=on=failure
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<h3 id="kube-proxy配置"><a href="#kube-proxy配置" class="headerlink" title="kube-proxy配置"></a>kube-proxy配置</h3><p>同样，kube-proxy的CA证书及公私钥和kubelet使用的一致，所以直接沿用</p>
+<pre class=" language-text"><code class="language-text">API_MASTER="--master=https://k8s-master:6443"
+LOGTOSTDERR="--logtostderr=false"
+LOGDIR="--log-dir=/var/log/kubernetes"
+LOG_LEVEL="--v=4"
+KUBECONFIG="--kubeconfig=/etc/kubernetes/kubeconfig"
+KUBE_PROXY_ARGS=""
+</code></pre>
+<pre class=" language-text"><code class="language-text">[Unit]
+Description=kubelet proxy
+After=network.target
+Requires=network.service
+
+[Service]
+EnvironmentFile=/etc/kubernetes/proxy
+ExecStart=/usr/bin/kube-proxy \
+          $API_MASTER \
+          $LOGTOSTDERR \
+          $LOGDIR \
+          $LOG_LEVEL \
+          $KUBECONFIG \
+          $KUBE_PROXY_ARGS
+Restart=on=failure
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
 
                 
             </div>
@@ -390,7 +655,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://blog.f4ct0r.top/404.html">https://blog.f4ct0r.top/404.html</a>
+                    <a href="https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Kubernetes_CA%E7%AD%BE%E5%90%8D%E7%9A%84%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81/">https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Kubernetes_CA%E7%AD%BE%E5%90%8D%E7%9A%84%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -427,7 +692,11 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/kubernetes/">
+                                    <span class="chip bg-color">kubernetes</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -474,19 +743,18 @@
                 <i class="far fa-dot-circle"></i>&nbsp;本篇
             </div>
             <div class="card">
-                <a href="/404.html">
+                <a href="/2022/06/05/middleware/kubernetes/Kubernetes_CA%E7%AD%BE%E5%90%8D%E7%9A%84%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81/">
                     <div class="card-image">
                         
+                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Kubernetes CA签名的双向认证">
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
+                        <span class="card-title">Kubernetes CA签名的双向认证</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            Pod的扩缩容
                         
                     </div>
                     <div class="publish-info">
@@ -495,13 +763,29 @@
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            f4ct0r
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/middleware/" class="post-category">
+                                    middleware
+                                </a>
+                            
+                            <a href="/categories/middleware/kubernetes/" class="post-category">
+                                    kubernetes
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
 
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/kubernetes/">
+                        <span class="chip bg-color">kubernetes</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
@@ -509,22 +793,21 @@
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/404.html">
+                <a href="/2022/06/05/middleware/kubernetes/Pod%E5%8D%87%E7%BA%A7%E5%92%8C%E5%9B%9E%E6%BB%9A/">
                     <div class="card-image">
                         
+                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Pod升级和回滚">
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
+                        <span class="card-title">Pod升级和回滚</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            Pod的扩缩容
                         
                     </div>
                     <div class="publish-info">
@@ -533,13 +816,28 @@
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            f4ct0r
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/middleware/" class="post-category">
+                                    middleware
+                                </a>
+                            
+                            <a href="/categories/middleware/kubernetes/" class="post-category">
+                                    kubernetes
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
-
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/kubernetes/">
+                        <span class="chip bg-color">kubernetes</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>

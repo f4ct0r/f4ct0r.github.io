@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="f4ct0r&#39;s Universe">
+    <meta name="keywords" content="Pod的生命周期、重启策略和健康检查, f4ct0r&#39;s Universe">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>f4ct0r&#39;s Universe</title>
+    <title>Pod的生命周期、重启策略和健康检查 | f4ct0r&#39;s Universe</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -194,12 +194,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/covers/kubernetes.jpeg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title"></h1>
+                    <h1 class="description center-align post-title">Pod的生命周期、重启策略和健康检查</h1>
                 </div>
             </div>
         </div>
@@ -313,12 +313,29 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/kubernetes/">
+                                <span class="chip bg-color">kubernetes</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/middleware/" class="post-category">
+                                middleware
+                            </a>
+                        
+                            <a href="/categories/middleware/kubernetes/" class="post-category">
+                                kubernetes
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -336,14 +353,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    21
+                    765
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    2 分
                 </div>
                 
 
@@ -363,7 +380,62 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>title: 404<br>date: 1654389418196<br>type: “404”<br>layout: “404”<br>description: “Oops～，你找的页面被送往其他星球了:(“</p>
+                <h2 id="Pod的生命周期"><a href="#Pod的生命周期" class="headerlink" title="Pod的生命周期"></a>Pod的生命周期</h2><p>Pod在整个生命周期过程中被定义为各种状态：</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pending</td>
+<td>API Server已经创建该Pod，但Pod内还有一个或多个容器的镜像没有创建，包括正在下载的镜像的过程</td>
+</tr>
+<tr>
+<td>Running</td>
+<td>Pod内的所有容器都已经创建，且至少有一个容器处于运行、正在启动或正在重启的状态</td>
+</tr>
+<tr>
+<td>Succeeded</td>
+<td>Pod内所有容器均成功执行退出，且不会重启</td>
+</tr>
+<tr>
+<td>Failed</td>
+<td>Pod内所有容器均已退出，且至少有一个容器退出的状态为失败状态</td>
+</tr>
+<tr>
+<td>Unknown</td>
+<td>由于某种原因无法获取到该Pod的状态</td>
+</tr>
+</tbody></table>
+<h2 id="Pod的重启策略"><a href="#Pod的重启策略" class="headerlink" title="Pod的重启策略"></a>Pod的重启策略</h2><p>Pod的重启策略顾名思义是应用于Pod内的所有容器，并且仅在Pod所处的Node上由kubelet根据RestartPolicy进行判断和重启操作。</p>
+<p>Pod的重启策略包括：</p>
+<ul>
+<li>Always: 当容器失效时，由kubelet自动重启该容器</li>
+<li>OnFailure: 当容器终止运行且退出码不为0时，由kubelet自动重启该容器</li>
+<li>Never: 不论容器运行状态如何，kubelet都不会重启该容器</li>
+</ul>
+<p>kubelet重启失效容器的时间间隔以sync-frequency * 2n来计算，最长延时5分钟，并在重启成功后重置该时间。</p>
+<p>用于管理Pod的资源对象RC、Job、DaemonSet及直接调用kubelet管理对重启策略都存在不同的要求：</p>
+<ul>
+<li>RC和DaemonSet: 必须设置为Always，需要保证该容器持续运行</li>
+<li>Job: 偏向于一次性任务，一般设置为OnFailure或Never，确保容器在执行完成后不再重启</li>
+<li>kubelet: 在Pod失效时自动重启它，不论RestartPolicy设置什么值，也不会对Pod进行健康检查</li>
+</ul>
+<h2 id="Pod健康检查"><a href="#Pod健康检查" class="headerlink" title="Pod健康检查"></a>Pod健康检查</h2><p>Pod的健康检查可以通过两种探针来检查：</p>
+<ul>
+<li>LivenessProbe: 判断容器是否存活（Running状态），如果LivenessProbe探针发现容器不健康，kubelet会kill掉该容器并根据RestartPolicy做相应处理。如果一个容器不包含LivenessProbe探针，那么kubelet会认为该容器的LivenessProbe探针永远返回Success。LivenessProbe探针有三种实现方式：</li>
+<li>ExecAction: 在容器内部执行一条shell命令，如果该命令的返回值是0，则表明容器健康</li>
+<li>TCPSocketAction: 通过容器的IP地址和端口进行TCP连接，如果连接成功则表明容器健康</li>
+<li>HTTPGetAction: 通过容器的IP地址、端口和路径调用HTTP GET请求，如果相应码&gt;200且&lt;400，则认为容器健康</li>
+<li>ReadinessProbe: 判断容器是否启动完成（Ready状态），可以接受请求，如果ReadinessProbe探针检测到失败，Pod状态会被修改。EndpointController将从Service的Endpoint中删除包含该容器所在Pod的EndPoint。</li>
+</ul>
+<p>对于每种探测方式，都需要设置以下两个参数：</p>
+<ul>
+<li>initialDelaySeconds: 启动容器后进行首次检查的等待时间，单位为s</li>
+<li>timeoutSeconds: 健康检查请求发起后等待的超时时间，单位为s，如果发生超时，kubelet会认为容器无法再提供服务，会对Pod进行重启</li>
+</ul>
 
                 
             </div>
@@ -390,7 +462,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://blog.f4ct0r.top/404.html">https://blog.f4ct0r.top/404.html</a>
+                    <a href="https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Pod%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E3%80%81%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5%E5%92%8C%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5/">https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Pod%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E3%80%81%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5%E5%92%8C%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -427,7 +499,11 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/kubernetes/">
+                                    <span class="chip bg-color">kubernetes</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -469,39 +545,52 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/404.html">
+                <a href="/2022/06/05/middleware/kubernetes/Pod%E6%89%A9%E5%AE%B9%E7%BC%A9%E5%AE%B9/">
                     <div class="card-image">
                         
+                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Pod扩容缩容">
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
+                        <span class="card-title">Pod扩容缩容</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            Pod的扩缩容
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-05
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-06-05
+                        </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            f4ct0r
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/middleware/" class="post-category">
+                                    middleware
+                                </a>
+                            
+                            <a href="/categories/middleware/kubernetes/" class="post-category">
+                                    kubernetes
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
-
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/kubernetes/">
+                        <span class="chip bg-color">kubernetes</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
@@ -509,22 +598,21 @@
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/404.html">
+                <a href="/2022/06/05/middleware/kubernetes/Kubernetes%E4%BB%8B%E7%BB%8D/">
                     <div class="card-image">
                         
+                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Kubernetes介绍">
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
+                        <span class="card-title">Kubernetes介绍</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            Kubernetes介绍
                         
                     </div>
                     <div class="publish-info">
@@ -533,13 +621,28 @@
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            f4ct0r
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/middleware/" class="post-category">
+                                    middleware
+                                </a>
+                            
+                            <a href="/categories/middleware/kubernetes/" class="post-category">
+                                    kubernetes
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
-
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/kubernetes/">
+                        <span class="chip bg-color">kubernetes</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
