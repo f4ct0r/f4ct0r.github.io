@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Kubernetes介绍, f4ct0r&#39;s Universe">
+    <meta name="keywords" content="no IP addresses available in range set, f4ct0r&#39;s Universe">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Kubernetes介绍 | f4ct0r&#39;s Universe</title>
+    <title>no IP addresses available in range set | f4ct0r&#39;s Universe</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -199,7 +199,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Kubernetes介绍</h1>
+                    <h1 class="description center-align post-title">no IP addresses available in range set</h1>
                 </div>
             </div>
         </div>
@@ -353,14 +353,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.8k
+                    59
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    6 分
+                    1 分
                 </div>
                 
 
@@ -380,47 +380,15 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="Kubernetes是什么"><a href="#Kubernetes是什么" class="headerlink" title="Kubernetes是什么"></a>Kubernetes是什么</h2><p>首先，Kubernetes是一个全新的基于容器的分布式架构解决方案。这个解决方案由Google在2014年进行开源，是<a target="_blank" rel="noopener" href="https://research.google/pubs/pub43438/">Google Brog</a>（Brog是Google内部使用的基于容器的大规模集群管理系统）的开源版本。通过采用Kubernetes的设计架构，我们可以将很多底层分布式处理的工作交给Kubernetes，如负载均衡，服务调度，集群监控等，我们可以更专注于业务本身。</p>
-<p>其次，Kubernetes是一个开放的平台，它可以适用于任何一种平台（Windows，Linux，MACOS，BSD等），并且可以支持任何语言编写的服务，通过标准的TCP&#x2F;IP协议进行交互。</p>
-<p>最后，Kubernetes是一个完备的分布式系统支撑平台，拥有完备的集群管理能力，包括多层次的安全防护与准入控制，多租户应用支撑能力，透明的服务注册和服务发现机制，内建负载均衡，并拥有强大的故障发现及自我修复能力、服务滚动升级和在线扩容能力。</p>
-<h2 id="Kubernetes能干什么"><a href="#Kubernetes能干什么" class="headerlink" title="Kubernetes能干什么"></a>Kubernetes能干什么</h2><p>Kubernetes拥有以下几个特性：</p>
-<ul>
-<li>容器平台</li>
-<li>微服务平台</li>
-<li>便携的云平台</li>
-</ul>
-<p>首先，Kubernetes提供了一个容器中心管理环境，它可以对计算资源、网络资源、存储资源进行编排。</p>
-<p>其次，通过Kubernetes底层的分布式能力，原来需要开发的分布式的服务调度，集群监控，服务发现等功能现在可以通通交给Kubernetes，可以让程序更专于业务本身。</p>
-<p>然后，Kubernetes非常适合微服务架构，微服务架构的核心就是将一个庞大的单体应用拆分成无数个微小的相互联系的服务，一个微服务背后可能由多个副本来保证高可用及负载均衡，副本数量可能会随着系统资源动态进行调节。每个服务都可以由不同的开发团队选择不同的技术来进行实现，每个服务也可以独立进行升级扩展，让整个系统拥有更强的稳定性。</p>
-<p>最后，Kubernetes具有强大的横向扩缩容能力，通过对系统资源的监测及用户配置来决定是否对副本进行扩缩容，通过负载均衡器或者无中心化的集群，在进行扩缩容时对用户完全透明，让业务系统长期都由良好的稳定性。</p>
-<h2 id="Kubernetes没有做什么"><a href="#Kubernetes没有做什么" class="headerlink" title="Kubernetes没有做什么"></a>Kubernetes没有做什么</h2><p>Kubernetes并不是一个传统的包罗万象的PaaS平台，因为Kubernetes操作在容器层而不是物理层，它提供了一些PaaS的通用特性，如部署、扩容、负载均衡、监控、日志记录等。但是，Kubernetes的这些特性并不是固定的，而是可选可插拔的。</p>
-<p>Kubernetes没有做什么：</p>
-<ul>
-<li>没有限制支持的应用的种类，Kubernetes旨在支持各种各样的应用，包括无状态、有状态、数据处理的应用，只要应用可以在容器中运行，就可以完美的在Kubernetes中跑起来。</li>
-<li>不对源码或者应用程序进行部署，可以根据技术需求来决定构建怎么样的CI&#x2F;CD流程。</li>
-<li>不直接提供应用级的服务，如中间件、数据处理框架，数据库，缓存或者是集群化的存储方案，但是这些组件都可以运行在Kubernetes中，也可以被其他运行在Kubernetes中的应用进行访问。</li>
-<li>不提供日志与监控的解决方案，仅仅提供一些插件和机制来收集和导出这些指标。</li>
-<li>不提供配置语言，它提供了一个声明性API，可以通过任意形式的声明性规范来实现。</li>
-<li>不提供或采用任何全面的机器配置，维护，管理或自我修复系统。</li>
-</ul>
-<h2 id="为什么选择容器"><a href="#为什么选择容器" class="headerlink" title="为什么选择容器"></a>为什么选择容器</h2><p>之前部署应用是通过在目标机器上通过包管理工具进行安装，这就导致在系统中的各种应用的运行，配置，库依赖和生命周期都不能很好的解耦（例如两个应用程序所需要的依赖库相同或仅版本不同），也有通过利用虚拟机镜像进行部署和回滚，但是虚拟机的重量的移植性不高，原因在于每一个虚拟机镜像都是一个独立的系统，过多的应用会导致虚拟机镜像无限扩大。</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw3Pds"><img src="https://s1.ax1x.com/2022/06/05/Xw3Pds.jpg" alt="kubernetes-1.jpg"></a></p>
-<p>新的方案是通过基于操作系统级别的虚拟化技术来实现的容器化部署，而不是硬件层面的虚拟化技术。这些容器可以从Host层面上进行彼此隔离，它们都有自己的文件系统，彼此间无法看到对方的进程，并且可以对使用的系统的算资源进行限制。容器比虚拟机更方便构建部署，因为容器虽然使用同一个内核，但是底层基础架构和主机文件系统分离。</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw3ion"><img src="https://s1.ax1x.com/2022/06/05/Xw3ion.jpg" alt="kubernetes-2.jpg"></a></p>
-<p>由于容器更小，也可以更快进行构建，一个应用程序便可以被打包成一个容器镜像，而这种一对一的应用程序到映像关系解锁了容器的全部优势。通过使用容器，可以在代码构建发布时创建一个不可变的镜像，而不需要在部署时才开始进行环境的安装等操作，因为每一个镜像并需要依赖其他的应用程序，也不需要和基础环境相耦合。而且，容器比虚拟机更加透明，可以更好的实现对资源的监控和管理。</p>
-<p><em>容器的优势</em>：</p>
-<ul>
-<li>更灵活的应用创建及部署：比虚拟机镜像更简易和高效的创建容器镜像。</li>
-<li>持续性的开发，集成和部署：通过快速简便的回滚（由于镜像不变性）提供可靠且频繁的容器镜像构建和部署。</li>
-<li>开发部署关注点分离：因为应用程序和基础设施的解耦性，可以在镜像的构建发布阶段而不是在部署阶段创建好应用容器的不可变镜像。</li>
-<li>监控：不仅仅可以监控系统层面上的信息和指标，也可以对应用进行健康检查。</li>
-<li>开发，测试和生产的环境一致性：开发环境和生产环境是保持一致的。</li>
-<li>适应性：可以运行在任何地方，Ubuntu，RHEL，CoreOS，Google Kubernetes Engine等。</li>
-<li>以应用为中心的管理方式：将应用作为运行在系统上的逻辑资源单元进行管理。</li>
-<li>松耦合，分布式，微服务，弹性计算：应用程序被分解为更小的独立部分，可以动态部署和管理，而不是在一台大型单一用途机器上运行的庞大的整体堆栈。</li>
-<li>资源隔离：对应用进行资源隔离，使得资源可以被分配在不同的应用上，从而性能可被预测。</li>
-<li>资源利用：通过对资源的分配，可以更高效更合理的利用资源。</li>
-</ul>
+                <p>Error adding network: failed to allocate for range 0: no IP addresses available in range set:</p>
+<p>解决方案：</p>
+<ol>
+<li>关闭kubernetes的所有服务(包括docker)</li>
+<li>rm -fr &#x2F;var&#x2F;lib&#x2F;cni&#x2F;* &#x2F;var&#x2F;lib&#x2F;kubelet&#x2F;*</li>
+<li>ifdown flannel.1</li>
+<li>ifdown docker0</li>
+<li>重启kubernetes所有服务</li>
+</ol>
 
                 
             </div>
@@ -447,7 +415,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Kubernetes%E4%BB%8B%E7%BB%8D/">https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Kubernetes%E4%BB%8B%E7%BB%8D/</a>
+                    <a href="https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/no_IP_addresses_available_in_range_set/">https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/no_IP_addresses_available_in_range_set/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -534,18 +502,18 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/06/05/middleware/kubernetes/Pod%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E3%80%81%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5%E5%92%8C%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5/">
+                <a href="/2022/06/05/middleware/kubernetes/kubernetes_network_error/">
                     <div class="card-image">
                         
-                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Pod的生命周期、重启策略和健康检查">
+                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="kubernetes network error">
                         
-                        <span class="card-title">Pod的生命周期、重启策略和健康检查</span>
+                        <span class="card-title">kubernetes network error</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            介绍Pod的生命周期、重启策略及健康检查
+                            Kubernetes遇到的网络问题
                         
                     </div>
                     <div class="publish-info">
@@ -586,18 +554,18 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/06/05/middleware/kubernetes/Kubernetes%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/">
+                <a href="/2022/06/05/middleware/kubernetes/Kubernetes_CA%E7%AD%BE%E5%90%8D%E7%9A%84%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81/">
                     <div class="card-image">
                         
-                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Kubernetes概念解析">
+                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Kubernetes CA签名的双向认证">
                         
-                        <span class="card-title">Kubernetes概念解析</span>
+                        <span class="card-title">Kubernetes CA签名的双向认证</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            简单介绍Kubernetes的基本概念
+                            Pod的扩缩容
                         
                     </div>
                     <div class="publish-info">

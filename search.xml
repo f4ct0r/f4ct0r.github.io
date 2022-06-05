@@ -4,6 +4,87 @@
   
     
     <entry>
+      <title>kubernetes proxy</title>
+      <link href="/2022/06/05/middleware/kubernetes/kubernetes_proxy/"/>
+      <url>/2022/06/05/middleware/kubernetes/kubernetes_proxy/</url>
+      
+        <content type="html"><![CDATA[<p>kubernetes一共存在3种proxy</p><h2 id="kubectl-proxy"><a href="#kubectl-proxy" class="headerlink" title="kubectl proxy"></a>kubectl proxy</h2><p>该proxy作用于接收kubernetes API的前端，也就是说当使用了kubectl proxy之后，访问kubernetes API的请求会先被代理到该proxy，然后再被转发到REST API，这种proxy可以提供简单的安全机制来限制可以访问API的用户</p><h2 id="kubernetes-proxy-api"><a href="#kubernetes-proxy-api" class="headerlink" title="kubernetes proxy api"></a>kubernetes proxy api</h2><p>这类接口的作用是代理REST请求，即kubernetes api server把收到的REST请求转发到某个node的kubelet守护进程的REST端口上，由该kubelet进程负责响应</p><h2 id="kube-proxy"><a href="#kube-proxy" class="headerlink" title="kube-proxy"></a>kube-proxy</h2><p>在kubernetes集群的每个node上都会运行一个kube-proxy服务进程，这个进程可以看作service的透明代理兼负载均衡器，其核心功能是将到某个service的访问请求转发到后端的多个Pod实例上</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> middleware </category>
+          
+          <category> kubernetes </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> kubernetes </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>kubernetes network error</title>
+      <link href="/2022/06/05/middleware/kubernetes/kubernetes_network_error/"/>
+      <url>/2022/06/05/middleware/kubernetes/kubernetes_network_error/</url>
+      
+        <content type="html"><![CDATA[<p>创建pod时一直处于ContainerCreating状态，通过describe查看详细情况，发现cni插件报错</p><pre class=" language-shell"><code class="language-shell">[root@master0 ~]# kubectl describe pod registry-7dd988f576-zdzsr -n kube-systemName:           registry-7dd988f576-zdzsrNamespace:      kube-systemNode:           10.0.81.102/10.0.81.102Start Time:     Mon, 25 Mar 2019 10:18:57 +0800Labels:         app=registry                pod-template-hash=3885449132Annotations:    <none>Status:         PendingIP:Controlled By:  ReplicaSet/registry-7dd988f576Containers:  registry:    Container ID:    Image:          10.0.81.102:5000/google_containers/registry:1.1.0    Image ID:    Port:           5000/TCP    Host Port:      0/TCP    State:          Waiting      Reason:       ContainerCreating    Ready:          False    Restart Count:  0    Liveness:       http-get http://:5000/v2/ delay=10s timeout=5s period=10s #success=1 #failure=5    Environment:    <none>    Mounts:      /var/lib/registry from docker-data (rw)      /var/run/secrets/kubernetes.io/serviceaccount from default-token-lrtb4 (ro)Conditions:  Type           Status  Initialized    True  Ready          False  PodScheduled   TrueVolumes:  docker-data:    Type:          HostPath (bare host directory volume)    Path:          /data/registry    HostPathType:  Directory  default-token-lrtb4:    Type:        Secret (a volume populated by a Secret)    SecretName:  default-token-lrtb4    Optional:    falseQoS Class:       BestEffortNode-Selectors:  master=masterTolerations:     <none>Events:  Type     Reason                  Age                 From                  Message  ----     ------                  ----                ----                  -------  Warning  FailedScheduling        23m (x26 over 29m)  default-scheduler     0/3 nodes are available: 1 node(s) were not ready, 1 node(s) were out of disk space, 2 node(s) didn't match node selector.  Warning  FailedScheduling        15m (x26 over 22m)  default-scheduler     0/3 nodes are available: 1 node(s) were not ready, 1 node(s) were out of disk space, 2 node(s) didn't match node selector.  Normal   SuccessfulMountVolume   14m                 kubelet, 10.0.81.102  MountVolume.SetUp succeeded for volume "docker-data"  Normal   SuccessfulMountVolume   14m                 kubelet, 10.0.81.102  MountVolume.SetUp succeeded for volume "default-token-lrtb4"  Warning  FailedCreatePodSandBox  14m (x12 over 14m)  kubelet, 10.0.81.102  Failed create pod sandbox: rpc error: code = Unknown desc = NetworkPlugin cni failed to set up pod "registry-7dd988f576-zdzsr_kube-system" network: failed to set bridge addr: "docker0" already has an IP address different from 10.2.89.1/24  Warning  FailedCreatePodSandBox  9m (x123 over 12m)  kubelet, 10.0.81.102  Failed create pod sandbox: rpc error: code = Unknown desc = NetworkPlugin cni failed to set up pod "registry-7dd988f576-zdzsr_kube-system" network: failed to allocate for range 0: no IP addresses available in range set: 10.2.89.1-10.2.89.254  Normal   SandboxChanged          4m (x441 over 14m)  kubelet, 10.0.81.102  Pod sandbox changed, it will be killed and re-created.  Warning  FailedSync              3m                  kubelet, 10.0.81.102  error determining status: rpc error: code = Unknown desc = Error: No such container: 0b436f239e5176c75cff98c775e8bdd619686f91915758e2c5ba1b5f51de458d  Normal   SuccessfulMountVolume   3m                  kubelet, 10.0.81.102  MountVolume.SetUp succeeded for volume "docker-data"  Normal   SuccessfulMountVolume   3m                  kubelet, 10.0.81.102  MountVolume.SetUp succeeded for volume "default-token-lrtb4"  Warning  FailedCreatePodSandBox  3m (x11 over 3m)    kubelet, 10.0.81.102  Failed create pod sandbox: rpc error: code = Unknown desc = NetworkPlugin cni failed to set up pod "registry-7dd988f576-zdzsr_kube-system" network: failed to allocate for range 0: no IP addresses available in range set: 10.2.89.1-10.2.89.254  Normal   SandboxChanged          3m (x11 over 3m)    kubelet, 10.0.81.102  Pod sandbox changed, it will be killed and re-created.</code></pre><p>排查记录：</p><ol><li>查看flannel.1与docker0的IP是否处于同一网段</li><li>然后通过错误信息<code>network: failed to allocate for range 0: no IP addresses available in range set: 10.2.89.1-10.2.89.254</code>怀疑该网段的所有IP都被占用</li><li>查看<code>/var/lib/cni/networks/flannel/</code>中的文件，发现该网段的IP都有被记录</li><li>删除<code>/var/lib/cni/flannel/*</code>和<code>/var/lib/cni/networks/flannel/*</code>即可解决问题</li></ol><p>出现该问题的具体原因还未知，可能时cni的一个<br><a href="https://bugzilla.redhat.com/show_bug.cgi?id=1532965">bug</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> middleware </category>
+          
+          <category> kubernetes </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> kubernetes </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>no IP addresses available in range set</title>
+      <link href="/2022/06/05/middleware/kubernetes/no_IP_addresses_available_in_range_set/"/>
+      <url>/2022/06/05/middleware/kubernetes/no_IP_addresses_available_in_range_set/</url>
+      
+        <content type="html"><![CDATA[<p>Error adding network: failed to allocate for range 0: no IP addresses available in range set:</p><p>解决方案：</p><ol><li>关闭kubernetes的所有服务(包括docker)</li><li>rm -fr &#x2F;var&#x2F;lib&#x2F;cni&#x2F;* &#x2F;var&#x2F;lib&#x2F;kubelet&#x2F;*</li><li>ifdown flannel.1</li><li>ifdown docker0</li><li>重启kubernetes所有服务</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> middleware </category>
+          
+          <category> kubernetes </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> kubernetes </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Kubernetes CA签名的双向认证</title>
       <link href="/2022/06/05/middleware/kubernetes/Kubernetes_CA%E7%AD%BE%E5%90%8D%E7%9A%84%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81/"/>
       <url>/2022/06/05/middleware/kubernetes/Kubernetes_CA%E7%AD%BE%E5%90%8D%E7%9A%84%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81/</url>
