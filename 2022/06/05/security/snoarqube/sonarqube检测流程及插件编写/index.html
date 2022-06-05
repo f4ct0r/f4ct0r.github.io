@@ -349,7 +349,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.5k
+                    1.4k
                 </div>
                 
 
@@ -376,9 +376,9 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xwp7fx"><img src="https://s1.ax1x.com/2022/06/05/Xwp7fx.jpg" alt="Xwp7fx.jpg"></a></p>
-<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>当今的大部分公司都有对自己的业务代码进行安全性审计的需求，来保证业务代码的安全性，同时代码审计作为SDL中重要的一环，可有效保证业务的CIA。但是人工审计存在严重的性能瓶颈，单纯的使用代码扫描器效果也不尽如意，误报问题较多。目前较好的方法：结合业务，自定义规则，结合两者优势。但是网上关于这方面的介绍较少，希望本文章能帮助到有需求的同学。选择的扫描为SonarQube，这款扫描器是开源扫描器中较为出色的一款，有丰富的图像化界面和强大的语法解析能力。</p>
-<h1 id="检测流程"><a href="#检测流程" class="headerlink" title="检测流程"></a>检测流程</h1><p>扫描的基本流程是：</p>
+                <p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xwp7fx"><img src="https://s1.ax1x.com/2022/06/05/Xwp7fx.jpg" alt="snoarqube"></a></p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>当今的大部分公司都有对自己的业务代码进行安全性审计的需求，来保证业务代码的安全性，同时代码审计作为SDL中重要的一环，可有效保证业务的CIA。但是人工审计存在严重的性能瓶颈，单纯的使用代码扫描器效果也不尽如意，误报问题较多。目前较好的方法：结合业务，自定义规则，结合两者优势。但是网上关于这方面的介绍较少，希望本文章能帮助到有需求的同学。选择的扫描为SonarQube，这款扫描器是开源扫描器中较为出色的一款，有丰富的图像化界面和强大的语法解析能力。</p>
+<h2 id="检测流程"><a href="#检测流程" class="headerlink" title="检测流程"></a>检测流程</h2><p>扫描的基本流程是：</p>
 <ol>
 <li>扫描器加载插件</li>
 <li>对扫描文件进行扫描，并解析成语法树</li>
@@ -386,8 +386,8 @@
 <li>进行自定义逻辑处理</li>
 <li>使用reportIssue上报问题</li>
 </ol>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/XwpZJx"><img src="https://s1.ax1x.com/2022/06/05/XwpZJx.jpg" alt="XwpZJx.jpg"></a><br><a target="_blank" rel="noopener" href="https://imgtu.com/i/XwpVF1"><img src="https://s1.ax1x.com/2022/06/05/XwpVF1.jpg" alt="XwpVF1.jpg"></a></p>
-<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><p>所以我们只需要重写visitNode方法就可以完成检测操作。当然，光有检测规则还不行，还需要一个规则定义文件和一个规则详情描述文件，如：</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/XwpZJx"><img src="https://s1.ax1x.com/2022/06/05/XwpZJx.jpg" alt="流程图-1.jpg"></a><br><a target="_blank" rel="noopener" href="https://imgtu.com/i/XwpVF1"><img src="https://s1.ax1x.com/2022/06/05/XwpVF1.jpg" alt="流程图-2.jpg"></a></p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>所以我们只需要重写visitNode方法就可以完成检测操作。当然，光有检测规则还不行，还需要一个规则定义文件和一个规则详情描述文件，如：</p>
 <p><strong>规则文件 org.sonar.java.checks.spring.RequestMappingMethodPublicCheck</strong></p>
 <pre class=" language-java"><code class="language-java"><span class="token keyword">package</span> org<span class="token punctuation">.</span>sonar<span class="token punctuation">.</span>java<span class="token punctuation">.</span>checks<span class="token punctuation">.</span>spring<span class="token punctuation">;</span>
 
@@ -401,12 +401,12 @@
 <span class="token keyword">import</span> org<span class="token punctuation">.</span>sonar<span class="token punctuation">.</span>plugins<span class="token punctuation">.</span>java<span class="token punctuation">.</span>api<span class="token punctuation">.</span>tree<span class="token punctuation">.</span>Tree<span class="token punctuation">;</span>
 
 <span class="token annotation punctuation">@Rule</span><span class="token punctuation">(</span>key <span class="token operator">=</span> <span class="token string">"S3751"</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">RequestMappingMethodPublicCheck</span> <span class="token keyword">extends</span> <span class="token class-name">IssuableSubscriptionVisitor</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">RequestMappingMethodPublicCheck</span> <span class="token keyword">extends</span> <span class="token class-name">IssuableSubscriptionVisitor</span> <span class="token punctuation">{</span>
 
   <span class="token annotation punctuation">@Override</span>
-  <span class="token keyword">public</span> List<span class="token operator">&lt;</span>Tree<span class="token punctuation">.</span>Kind<span class="token operator">></span> <span class="token function">nodesToVisit</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+  <span class="token keyword">public</span> List<span class="token operator">&lt;</span>Tree<span class="token punctuation">.</span>Kind<span class="token operator">></span> <span class="token function">nodesToVisit</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">return</span> Collections<span class="token punctuation">.</span><span class="token function">singletonList</span><span class="token punctuation">(</span>Tree<span class="token punctuation">.</span>Kind<span class="token punctuation">.</span>METHOD<span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
 
   <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> List<span class="token operator">&lt;</span>String<span class="token operator">></span> CONTROLLER_ANNOTATIONS <span class="token operator">=</span> Arrays<span class="token punctuation">.</span><span class="token function">asList</span><span class="token punctuation">(</span>
     <span class="token string">"org.springframework.stereotype.Controller"</span><span class="token punctuation">,</span>
@@ -423,40 +423,40 @@
   <span class="token punctuation">)</span><span class="token punctuation">;</span>
 
   <span class="token annotation punctuation">@Override</span>
-  <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">visitNode</span><span class="token punctuation">(</span>Tree tree<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">hasSemantic</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+  <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">visitNode</span><span class="token punctuation">(</span>Tree tree<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">hasSemantic</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
       <span class="token keyword">return</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
 
     MethodTree methodTree <span class="token operator">=</span> <span class="token punctuation">(</span>MethodTree<span class="token punctuation">)</span> tree<span class="token punctuation">;</span>
     Symbol<span class="token punctuation">.</span>MethodSymbol methodSymbol <span class="token operator">=</span> methodTree<span class="token punctuation">.</span><span class="token function">symbol</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
     <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isClassController</span><span class="token punctuation">(</span>methodSymbol<span class="token punctuation">)</span>
       <span class="token operator">&amp;&amp;</span> <span class="token function">isRequestMappingAnnotated</span><span class="token punctuation">(</span>methodSymbol<span class="token punctuation">)</span>
-      <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>methodSymbol<span class="token punctuation">.</span><span class="token function">isPublic</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+      <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>methodSymbol<span class="token punctuation">.</span><span class="token function">isPublic</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
       <span class="token function">reportIssue</span><span class="token punctuation">(</span>methodTree<span class="token punctuation">.</span><span class="token function">simpleName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"Make this method \"public\"."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
 
-  <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">isClassController</span><span class="token punctuation">(</span>Symbol<span class="token punctuation">.</span>MethodSymbol methodSymbol<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+  <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">isClassController</span><span class="token punctuation">(</span>Symbol<span class="token punctuation">.</span>MethodSymbol methodSymbol<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">return</span> CONTROLLER_ANNOTATIONS<span class="token punctuation">.</span><span class="token function">stream</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">anyMatch</span><span class="token punctuation">(</span>methodSymbol<span class="token punctuation">.</span><span class="token function">owner</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">metadata</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span><span class="token operator">:</span>isAnnotatedWith<span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
 
-  <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">isRequestMappingAnnotated</span><span class="token punctuation">(</span>Symbol<span class="token punctuation">.</span>MethodSymbol methodSymbol<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+  <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">isRequestMappingAnnotated</span><span class="token punctuation">(</span>Symbol<span class="token punctuation">.</span>MethodSymbol methodSymbol<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">return</span> REQUEST_ANNOTATIONS<span class="token punctuation">.</span><span class="token function">stream</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">anyMatch</span><span class="token punctuation">(</span>methodSymbol<span class="token punctuation">.</span><span class="token function">metadata</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span><span class="token operator">:</span>isAnnotatedWith<span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
 
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
 </code></pre>
 <p><strong>规则定义文件 S3751_java.json</strong></p>
-<pre class=" language-json"><code class="language-json">&amp;#<span class="token number">123</span><span class="token punctuation">;</span>
+<pre class=" language-json"><code class="language-json"><span class="token punctuation">{</span>
   <span class="token property">"title"</span><span class="token operator">:</span> <span class="token string">"\"@RequestMapping\" methods should be \"public\""</span><span class="token punctuation">,</span>
   <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"VULNERABILITY"</span><span class="token punctuation">,</span>
   <span class="token property">"status"</span><span class="token operator">:</span> <span class="token string">"ready"</span><span class="token punctuation">,</span>
-  <span class="token property">"remediation"</span><span class="token operator">:</span> &amp;#<span class="token number">123</span><span class="token punctuation">;</span>
+  <span class="token property">"remediation"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"func"</span><span class="token operator">:</span> <span class="token string">"Constant\/Issue"</span><span class="token punctuation">,</span>
     <span class="token property">"constantCost"</span><span class="token operator">:</span> <span class="token string">"2min"</span>
-  &amp;#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
   <span class="token property">"tags"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
     <span class="token string">"spring"</span><span class="token punctuation">,</span>
     <span class="token string">"owasp-a6"</span>
@@ -468,12 +468,12 @@
   <span class="token property">"ruleSpecification"</span><span class="token operator">:</span> <span class="token string">"RSPEC-3751"</span><span class="token punctuation">,</span>
   <span class="token property">"sqKey"</span><span class="token operator">:</span> <span class="token string">"S3751"</span><span class="token punctuation">,</span>
   <span class="token property">"scope"</span><span class="token operator">:</span> <span class="token string">"Main"</span><span class="token punctuation">,</span>
-  <span class="token property">"securityStandards"</span><span class="token operator">:</span> &amp;#<span class="token number">123</span><span class="token punctuation">;</span>
+  <span class="token property">"securityStandards"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"OWASP"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
       <span class="token string">"A6"</span>
     <span class="token punctuation">]</span>
-  &amp;#<span class="token number">125</span><span class="token punctuation">;</span>
-&amp;#<span class="token number">125</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
 </code></pre>
 <ul>
 <li>type：为该规则的类型，包括VULNERABILITY、BUG SECURITY_HOTSPOT、CODE_SMELL等。</li>
@@ -493,12 +493,12 @@ it. That's because AOP proxies are not applied to non-public methods.<span class
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">></span></span>Noncompliant Code Example<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">></span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>pre</span><span class="token punctuation">></span></span>
 @RequestMapping("/greet", method = GET)
-private String greet(String greetee) <span class="token entity" title="&#123;">&amp;#123;</span>  // Noncompliant
+private String greet(String greetee) {  // Noncompliant
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>pre</span><span class="token punctuation">></span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">></span></span>Compliant Solution<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">></span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>pre</span><span class="token punctuation">></span></span>
 @RequestMapping("/greet", method = GET)
-public String greet(String greetee) <span class="token entity" title="&#123;">&amp;#123;</span>
+public String greet(String greetee) {
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>pre</span><span class="token punctuation">></span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">></span></span>See<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">></span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">></span></span>
@@ -524,49 +524,49 @@ public String greet(String greetee) <span class="token entity" title="&#123;">&a
 <span class="token keyword">import</span> java<span class="token punctuation">.</span>util<span class="token punctuation">.</span>List<span class="token punctuation">;</span>
 
 <span class="token annotation punctuation">@Rule</span><span class="token punctuation">(</span>key <span class="token operator">=</span> <span class="token string">"Struts2_S2_057Check"</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Struts2_S2_057Check</span> <span class="token keyword">implements</span> <span class="token class-name">PomCheck</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Struts2_S2_057Check</span> <span class="token keyword">implements</span> <span class="token class-name">PomCheck</span> <span class="token punctuation">{</span>
 
     <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">scanFile</span><span class="token punctuation">(</span>PomCheckContext context<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">scanFile</span><span class="token punctuation">(</span>PomCheckContext context<span class="token punctuation">)</span> <span class="token punctuation">{</span>
         List<span class="token operator">&lt;</span>Dependency<span class="token operator">></span> dependencies <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">MavenDependencyCollector</span><span class="token punctuation">(</span>context<span class="token punctuation">.</span><span class="token function">getMavenProject</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">allDependencies</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span>Dependency dependency <span class="token operator">:</span> dependencies<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span>Dependency dependency <span class="token operator">:</span> dependencies<span class="token punctuation">)</span> <span class="token punctuation">{</span>
             LocatedAttribute artifactId <span class="token operator">=</span> dependency<span class="token punctuation">.</span><span class="token function">getArtifactId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
             LocatedAttribute version <span class="token operator">=</span> dependency<span class="token punctuation">.</span><span class="token function">getVersion</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-            <span class="token keyword">if</span> <span class="token punctuation">(</span>version <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> artifactId <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> <span class="token string">"struts2-core"</span><span class="token punctuation">.</span><span class="token function">equalsIgnoreCase</span><span class="token punctuation">(</span>artifactId<span class="token punctuation">.</span><span class="token function">getValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token function">strutsVerCompare</span><span class="token punctuation">(</span>version<span class="token punctuation">.</span><span class="token function">getValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>version <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> artifactId <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> <span class="token string">"struts2-core"</span><span class="token punctuation">.</span><span class="token function">equalsIgnoreCase</span><span class="token punctuation">(</span>artifactId<span class="token punctuation">.</span><span class="token function">getValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token function">strutsVerCompare</span><span class="token punctuation">(</span>version<span class="token punctuation">.</span><span class="token function">getValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
                 String message <span class="token operator">=</span> <span class="token string">"此版本Struts2包含高危漏洞"</span><span class="token punctuation">;</span>
                 List<span class="token operator">&lt;</span>PomCheckContext<span class="token punctuation">.</span>Location<span class="token operator">></span> secondaries <span class="token operator">=</span> <span class="token function">getSecondary</span><span class="token punctuation">(</span>version<span class="token punctuation">)</span><span class="token punctuation">;</span>
                 <span class="token keyword">int</span> line <span class="token operator">=</span> version<span class="token punctuation">.</span><span class="token function">startLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">line</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
                 context<span class="token punctuation">.</span><span class="token function">reportIssue</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> line<span class="token punctuation">,</span> message<span class="token punctuation">,</span> secondaries<span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-        <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
 
-    <span class="token keyword">private</span> <span class="token keyword">static</span> List<span class="token operator">&lt;</span>PomCheckContext<span class="token punctuation">.</span>Location<span class="token operator">></span> <span class="token function">getSecondary</span><span class="token punctuation">(</span><span class="token annotation punctuation">@Nullable</span> LocatedAttribute systemPath<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-        <span class="token keyword">if</span> <span class="token punctuation">(</span>systemPath <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> StringUtils<span class="token punctuation">.</span><span class="token function">isNotBlank</span><span class="token punctuation">(</span>systemPath<span class="token punctuation">.</span><span class="token function">getValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> List<span class="token operator">&lt;</span>PomCheckContext<span class="token punctuation">.</span>Location<span class="token operator">></span> <span class="token function">getSecondary</span><span class="token punctuation">(</span><span class="token annotation punctuation">@Nullable</span> LocatedAttribute systemPath<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>systemPath <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> StringUtils<span class="token punctuation">.</span><span class="token function">isNotBlank</span><span class="token punctuation">(</span>systemPath<span class="token punctuation">.</span><span class="token function">getValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
             <span class="token keyword">return</span> Lists<span class="token punctuation">.</span><span class="token function">newArrayList</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">PomCheckContext<span class="token punctuation">.</span>Location</span><span class="token punctuation">(</span><span class="token string">"configure check"</span><span class="token punctuation">,</span> systemPath<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
         <span class="token keyword">return</span> ImmutableList<span class="token punctuation">.</span><span class="token function">of</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
 
-    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">strutsVerCompare</span><span class="token punctuation">(</span>String version<span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">strutsVerCompare</span><span class="token punctuation">(</span>String version<span class="token punctuation">)</span><span class="token punctuation">{</span>
         String StrutsVersion1 <span class="token operator">=</span> <span class="token string">"2.3.35"</span><span class="token punctuation">;</span>
         String StrutsVersion2 <span class="token operator">=</span> <span class="token string">"2.5.17"</span><span class="token punctuation">;</span>
         String<span class="token punctuation">[</span><span class="token punctuation">]</span> versionArray1 <span class="token operator">=</span> version<span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">"\\."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">if</span><span class="token punctuation">(</span>versionArray1<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">equalsIgnoreCase</span><span class="token punctuation">(</span><span class="token string">"3"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-            <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">compareVersion</span><span class="token punctuation">(</span>StrutsVersion1<span class="token punctuation">,</span> version<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>versionArray1<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">equalsIgnoreCase</span><span class="token punctuation">(</span><span class="token string">"3"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">compareVersion</span><span class="token punctuation">(</span>StrutsVersion1<span class="token punctuation">,</span> version<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
                 <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-            <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-        <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-        <span class="token keyword">if</span><span class="token punctuation">(</span>versionArray1<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">equalsIgnoreCase</span><span class="token punctuation">(</span><span class="token string">"5"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-            <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">compareVersion</span><span class="token punctuation">(</span>StrutsVersion2<span class="token punctuation">,</span> version<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>versionArray1<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">equalsIgnoreCase</span><span class="token punctuation">(</span><span class="token string">"5"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">compareVersion</span><span class="token punctuation">(</span>StrutsVersion2<span class="token punctuation">,</span> version<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
                 <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-            <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-        <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
         <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
 
-    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">int</span> <span class="token function">compareVersion</span><span class="token punctuation">(</span>String version1<span class="token punctuation">,</span> String version2<span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">int</span> <span class="token function">compareVersion</span><span class="token punctuation">(</span>String version1<span class="token punctuation">,</span> String version2<span class="token punctuation">)</span><span class="token punctuation">{</span>
         String<span class="token punctuation">[</span><span class="token punctuation">]</span> versionArray1 <span class="token operator">=</span> version1<span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">"\\."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         String<span class="token punctuation">[</span><span class="token punctuation">]</span> versionArray2 <span class="token operator">=</span> version2<span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">"\\."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token keyword">int</span> idx <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
@@ -574,14 +574,14 @@ public String greet(String greetee) <span class="token entity" title="&#123;">&a
         <span class="token keyword">int</span> diff <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
         <span class="token keyword">while</span> <span class="token punctuation">(</span>idx <span class="token operator">&lt;</span> minLength
                 <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>diff <span class="token operator">=</span> versionArray1<span class="token punctuation">[</span>idx<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> versionArray2<span class="token punctuation">[</span>idx<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span>
-                <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>diff <span class="token operator">=</span> versionArray1<span class="token punctuation">[</span>idx<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">compareTo</span><span class="token punctuation">(</span>versionArray2<span class="token punctuation">[</span>idx<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+                <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>diff <span class="token operator">=</span> versionArray1<span class="token punctuation">[</span>idx<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">compareTo</span><span class="token punctuation">(</span>versionArray2<span class="token punctuation">[</span>idx<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
             <span class="token operator">++</span>idx<span class="token punctuation">;</span>
-        <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
         diff <span class="token operator">=</span> <span class="token punctuation">(</span>diff <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">?</span> diff <span class="token operator">:</span> versionArray1<span class="token punctuation">.</span>length <span class="token operator">-</span> versionArray2<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
         <span class="token keyword">return</span> diff<span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
 
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
 </code></pre>
 <p><strong>规则详细说明：</strong></p>
 <ul>
@@ -960,7 +960,7 @@ public String greet(String greetee) <span class="token entity" title="&#123;">&a
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">1.5k</span>&nbsp;字
+                class="white-color">1.4k</span>&nbsp;字
             
             
             
