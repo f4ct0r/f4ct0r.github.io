@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>logstash_sql_last_run填坑</title>
+      <link href="/2022/06/06/middleware/elk/logstash_sql_last_run%E5%A1%AB%E5%9D%91/"/>
+      <url>/2022/06/06/middleware/elk/logstash_sql_last_run%E5%A1%AB%E5%9D%91/</url>
+      
+        <content type="html"><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>今天在使用logstash来读取mssql数据时，发现logstash的sql_last_run的值一直没有更新，导致一直在重复读取数据，研究了好久终于搞清楚问题的原因</p><h2 id="最初的想法"><a href="#最初的想法" class="headerlink" title="最初的想法"></a>最初的想法</h2><p>由于目标数据库会每天存储在当天的数据库里，所以在读取的过程中需要进行跨库读取，一开始我们决定使用<code>ID</code>来进行游标，<code>sql_last_run</code>的值就会是上一次读取的最后一个<code>ID</code></p><p>我们最初的配置如下：</p><pre class=" language-text"><code class="language-text">input {    jdbc {        jdbc_driver_library => "/opt/logstash/sqljdbc_10.2/chs/mssql-jdbc-10.2.0.jre8.jar"        jdbc_driver_class => "com.microsoft.sqlserver.jdbc.SQLServerDriver"        jdbc_connection_string => "jdbc:sqlserver://server:1433;databasename=database"        jdbc_user => "user"        jdbc_password => "password"        jdbc_default_timezone => "Asia/Shanghai"        use_column_value => true        tracking_column => "ID"  # <=注意这里是大写的ID        record_last_run => true        schedule => "* * * * *"        last_run_metadata_path => "/opt/logstash/cache/.jdbc_last_run"        statement => "            declare @nowtime varchar(32);            declare @sql varchar(8000);            set @nowtime=(Select CONVERT(varchar(100), GETDATE(), 112));            set @sql='select * FROM [DBNAME.' + @nowtime + '] where ID > :sql_last_run order by ID ASC';            exec(@sql);        "    }}</code></pre><p>结果运行起来之后发现直接报错，logstash说和服务器压根儿没法建立连接，原因是不能和服务器建立一个加密的链路</p><pre class=" language-text"><code class="language-text">Unable to connect to database. Tried 1 times {:error_message=>"Java::ComMicrosoftSqlserverJdbc::SQLServerException: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: \"sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target\". ClientConnectionId:6a991eaa-0b7e-41ee-8e82-22c2f23d12a6"}</code></pre><p>看报错才知道服务端只允许加密连接的建立，于是在配置里的连接字符串里加上加密的配置</p><pre class=" language-text"><code class="language-text">jdbc_connection_string => "jdbc:sqlserver://server:1433;databasename=database;encrypt=true;trustServerCertificate=true;"</code></pre><p>重新跑一边logstash，没有报错，觉得还挺顺利</p><h2 id="奇坑的配置项"><a href="#奇坑的配置项" class="headerlink" title="奇坑的配置项"></a>奇坑的配置项</h2><p>但随着日志的打印，发现老是在重复读取数据，看了看配置没发现任何问题，并且<code>/opt/logstash/cache/.jdbc_last_run</code>里序列化的值，难道是logstash出bug了？</p><p>一顿Google后才知道原来坑在<code>tracking_column</code>上，<code>tracking_column</code>这个配置默认只认识小写的值，也就是说我配置的<code>ID</code>对logstash来说根本不认识，除非将<code>lowercase_column_names</code>的值置为<code>false</code>，但是这两点在官方文档上都没有说明。。。。。坑啊。。。。</p><p>修改成小写后重新运行，发现总算是运行正常，<code>/opt/logstash/cache/.jdbc_last_run</code>里的<code>id</code>值也在改变，看上去非常的完美</p><h2 id="id产生的问题"><a href="#id产生的问题" class="headerlink" title="id产生的问题"></a>id产生的问题</h2><p>结果到了第二天，发现根本没有任何数据生成，这是为什么呢？也没有任何报错，哪里又出bug了？</p><p>在查看了<code>/opt/logstash/cache/.jdbc_last_run</code>的值之后发现是一个很大的<code>id</code>值，通过where条件的值来看，只有大于这个<code>id</code>的值才会有数据输出，那可不是没数据嘛。。。。</p><p>那看来对于这种需要每天查询不同数据库的情况来说，用<code>id</code>来做游标进行偏移并不可取，所以想到通过时间来进行偏移，这样就不用担心这个问题了</p><h2 id="最终的结果"><a href="#最终的结果" class="headerlink" title="最终的结果"></a>最终的结果</h2><p>所以，最终的配置如下，总算是完美的跑起来了。。。。</p><pre class=" language-text"><code class="language-text">input {    jdbc {        jdbc_driver_library => "/opt/logstash/sqljdbc_10.2/chs/mssql-jdbc-10.2.0.jre8.jar"        jdbc_driver_class => "com.microsoft.sqlserver.jdbc.SQLServerDriver"        jdbc_connection_string => "jdbc:sqlserver://server:1433;databasename=database;encrypt=true;trustServerCertificate=true;"        jdbc_user => "user"        jdbc_password => "password"        jdbc_default_timezone => "Asia/Shanghai"        use_column_value => true        tracking_column => "time"        tracking_column_type => "timestamp"        record_last_run => true        schedule => "* * * * *"        last_run_metadata_path => "/opt/logstash/cache/.jdbc_last_run"        statement => "            declare @nexttime varchar(100);            declare @nowtime varchar(32);            declare @sql varchar(8000);            set @nowtime=(Select CONVERT(varchar(100), GETDATE(), 112));            set @sql='select * FROM [DBNAME.' + @nowtime + '] where time > ':sql_last_value' order by time ASC';            exec(@sql);        "    }}</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> logstash </category>
+          
+          <category> middleware </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> logstash </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>kubernetes proxy</title>
       <link href="/2022/06/05/middleware/kubernetes/kubernetes_proxy/"/>
       <url>/2022/06/05/middleware/kubernetes/kubernetes_proxy/</url>

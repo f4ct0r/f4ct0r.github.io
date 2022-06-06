@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Pod升级和回滚, f4ct0r&#39;s Universe">
+    <meta name="keywords" content="logstash_sql_last_run填坑, f4ct0r&#39;s Universe">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Pod升级和回滚 | f4ct0r&#39;s Universe</title>
+    <title>logstash_sql_last_run填坑 | f4ct0r&#39;s Universe</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -194,12 +194,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/covers/kubernetes.jpeg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Pod升级和回滚</h1>
+                    <h1 class="description center-align post-title">logstash_sql_last_run填坑</h1>
                 </div>
             </div>
         </div>
@@ -315,8 +315,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/kubernetes/">
-                                <span class="chip bg-color">kubernetes</span>
+                            <a href="/tags/logstash/">
+                                <span class="chip bg-color">logstash</span>
                             </a>
                         
                     </div>
@@ -327,12 +327,12 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/middleware/" class="post-category">
-                                middleware
+                            <a href="/categories/logstash/" class="post-category">
+                                logstash
                             </a>
                         
-                            <a href="/categories/middleware/kubernetes/" class="post-category">
-                                kubernetes
+                            <a href="/categories/logstash/middleware/" class="post-category">
+                                middleware
                             </a>
                         
                     </div>
@@ -344,7 +344,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-06-05
+                    2022-06-06
                 </div>
                 
 
@@ -353,7 +353,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    975
+                    819
                 </div>
                 
 
@@ -380,56 +380,71 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>当集群的某个服务需要升级时，需要停止目前与该服务相关的所有Pod，然后再下载或导入新版本镜像并创建新的Pod，如果集群的规模比较大，整个升级就会变得异常痛苦，在升级的过程中会导致较长时间的服务不可用的状态。所以Kubernetes提供了滚动升级功能来解决上述问题。</p>
-<h2 id="升级"><a href="#升级" class="headerlink" title="升级"></a>升级</h2><p>通过Deployment创建的Pod，可以在运行时修改Deployment的Pod定义（spec:template）或镜像名称，并应用到Deployment对象上，系统即可完成Deployment的自动更新操作。如果在更新的过程中发生错误，还可以通过回滚来恢复Pod的版本。</p>
-<p>现有一个Deployment文件，可以看到其中镜像使用的版本是nginx 1.14.0</p>
-<pre class=" language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> extensions/v1beta1
-<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
-<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
-  <span class="token key atrule">name</span><span class="token punctuation">:</span> frontend                                         <span class="token comment" spellcheck="true">#Deployment对象的名称</span>
-<span class="token key atrule">spec</span><span class="token punctuation">:</span>
-  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">3                                            </span><span class="token comment" spellcheck="true">#生成的副本数量</span>
-  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
-    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
-      <span class="token key atrule">tier</span><span class="token punctuation">:</span> frontend                                     <span class="token comment" spellcheck="true">#选择器选择的标签，匹配副本的Label字段</span>
-    <span class="token key atrule">matchExpressions</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> <span class="token punctuation">{</span><span class="token key atrule">key</span><span class="token punctuation">:</span> tier<span class="token punctuation">,</span> <span class="token key atrule">operator</span><span class="token punctuation">:</span> In<span class="token punctuation">,</span> <span class="token key atrule">values</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>frontend<span class="token punctuation">]</span><span class="token punctuation">}</span>    <span class="token comment" spellcheck="true">#Key-Value形式对标签进行匹配</span>
-  <span class="token key atrule">template</span><span class="token punctuation">:</span>
-    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
-      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
-        <span class="token key atrule">tier</span><span class="token punctuation">:</span> frontend                                   <span class="token comment" spellcheck="true">#副本所打上的标签</span>
-    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
-      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> nginx
-        <span class="token key atrule">image</span><span class="token punctuation">:</span> docker.io/nginx<span class="token punctuation">:</span>1.14.0                    <span class="token comment" spellcheck="true">#Pod所使用的镜像</span>
-        <span class="token key atrule">ports</span><span class="token punctuation">:</span>
-        <span class="token punctuation">-</span> <span class="token key atrule">containerPort</span><span class="token punctuation">:</span> <span class="token number">80                              </span><span class="token comment" spellcheck="true">#容器所暴露的端口</span>
+                <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>今天在使用logstash来读取mssql数据时，发现logstash的sql_last_run的值一直没有更新，导致一直在重复读取数据，研究了好久终于搞清楚问题的原因</p>
+<h2 id="最初的想法"><a href="#最初的想法" class="headerlink" title="最初的想法"></a>最初的想法</h2><p>由于目标数据库会每天存储在当天的数据库里，所以在读取的过程中需要进行跨库读取，一开始我们决定使用<code>ID</code>来进行游标，<code>sql_last_run</code>的值就会是上一次读取的最后一个<code>ID</code></p>
+<p>我们最初的配置如下：</p>
+<pre class=" language-text"><code class="language-text">input {
+    jdbc {
+        jdbc_driver_library => "/opt/logstash/sqljdbc_10.2/chs/mssql-jdbc-10.2.0.jre8.jar"
+        jdbc_driver_class => "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+        jdbc_connection_string => "jdbc:sqlserver://server:1433;databasename=database"
+        jdbc_user => "user"
+        jdbc_password => "password"
+        jdbc_default_timezone => "Asia/Shanghai"
+        use_column_value => true
+        tracking_column => "ID"  # <=注意这里是大写的ID
+        record_last_run => true
+        schedule => "* * * * *"
+        last_run_metadata_path => "/opt/logstash/cache/.jdbc_last_run"
+        statement => "
+            declare @nowtime varchar(32);
+            declare @sql varchar(8000);
+            set @nowtime=(Select CONVERT(varchar(100), GETDATE(), 112));
+            set @sql='select * FROM [DBNAME.' + @nowtime + '] where ID > :sql_last_run order by ID ASC';
+            exec(@sql);
+        "
+    }
+}
 </code></pre>
-<p>然后创建一个Deployment资源对象，可以看到Deployment对象创建成功</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8BB4"><img src="https://s1.ax1x.com/2022/06/05/Xw8BB4.png" alt="1.png"></a></p>
-<p>通过kubelet describe可以查看创建生成的Pod的具体信息，可以看到所使用的image是nginx 1.14.0</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8DHJ"><img src="https://s1.ax1x.com/2022/06/05/Xw8DHJ.png" alt="2.png"></a></p>
-<p>通过手动调用kubelet去修改Deployment对象的镜像版本号，使用最新版本的nginx，可以看到Deployment对象已经更新</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8sE9"><img src="https://s1.ax1x.com/2022/06/05/Xw8sE9.png" alt="3.png"></a></p>
-<p>查看Pod的详细信息，发现当前的Pod已经使用的是最新版本的nginx</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8641"><img src="https://s1.ax1x.com/2022/06/05/Xw8641.png" alt="4.png"></a></p>
-<p>通过调用<code>kubectl describe deployment</code>，可以看到Deployment对象的详细事件信息。</p>
-<p>从中可以看到初始化的时候（创建Deployment对象时），kubelet创建了一个ReplicasSet frontend-4271948474并将副本数设置为3。6分钟之后触发手动更新操作，kubelet新创建了一个ReplicasSet frontend-4066361464并将其副本数量设置为1，然后将之前的ReplicasSet frontend-4271948474的数量设置为2，从而保证副本数量始终保持在期望值之中，并保证业务不会中断。之后慢慢的将旧的副本数降低至0，新的副本数增加至3完成滚动更新。</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8g9x"><img src="https://s1.ax1x.com/2022/06/05/Xw8g9x.png" alt="5.png"></a></p>
-<p>整个滚动更新的流程如下图</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8236"><img src="https://s1.ax1x.com/2022/06/05/Xw8236.png" alt="6.png"></a></p>
-<p>在整个滚动升级的过程中，系统会保证至少有2个Pod可用，并且最多可以同时运行4个Pod，在默认情况下，Deployment确保可用的Pod总数至少为所需的副本数量减maxUnavailable的数量，而Pod总数最多也不会超过maxSurge。maxUnavailable和maxSurge可以在Deployment对象的yaml文件中进行调节，之前的版本默认为1，从1.6版本之后，默认值更改为25%。</p>
-<ul>
-<li>maxUnavailable: 用于指定Deployment在更新过程中不可用的状态的Pod数量上限，该值可以是数值的绝对值也可以是Pod期望值数量的百分比</li>
-<li>maxSurge: 用于指定Deployment更新Pod过程中Pod总数超过Pod期望值的最大值。该值可以是数值的绝对值也可以是Pod期望值数量的百分比</li>
-</ul>
-<h2 id="回滚"><a href="#回滚" class="headerlink" title="回滚"></a>回滚</h2><p>当进行更新的版本不稳定时，我们可能要回滚到上一版本。默认情况下，所有的Deployment发布的历史记录都存在于系统中，以便我们随时可以进行回滚。</p>
-<p>通过调用<code>kubectl rollout history deployment</code>可以查看Deployment的部署记录，加上–revision参数可以看到具体版本的信息。</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8RgK"><img src="https://s1.ax1x.com/2022/06/05/Xw8RgK.png" alt="7.png"></a></p>
-<p>如果我们想要回滚到第一个版本，可以看到和滚动更新一样，会把旧的ReplicasSet创建的Pod减少，新的ReplicasSet创建的Pod增加。</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw8huD"><img src="https://s1.ax1x.com/2022/06/05/Xw8huD.png" alt="8.png"></a></p>
-<p>通过查看Pod的详细信息可以看到确实Pod的版本已经回滚到上一版本</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/Xw84De"><img src="https://s1.ax1x.com/2022/06/05/Xw84De.png" alt="9.png"></a></p>
+<p>结果运行起来之后发现直接报错，logstash说和服务器压根儿没法建立连接，原因是不能和服务器建立一个加密的链路</p>
+<pre class=" language-text"><code class="language-text">Unable to connect to database. Tried 1 times {:error_message=>"Java::ComMicrosoftSqlserverJdbc::SQLServerException: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: \"sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target\". ClientConnectionId:6a991eaa-0b7e-41ee-8e82-22c2f23d12a6"}
+</code></pre>
+<p>看报错才知道服务端只允许加密连接的建立，于是在配置里的连接字符串里加上加密的配置</p>
+<pre class=" language-text"><code class="language-text">jdbc_connection_string => "jdbc:sqlserver://server:1433;databasename=database;encrypt=true;trustServerCertificate=true;"
+</code></pre>
+<p>重新跑一边logstash，没有报错，觉得还挺顺利</p>
+<h2 id="奇坑的配置项"><a href="#奇坑的配置项" class="headerlink" title="奇坑的配置项"></a>奇坑的配置项</h2><p>但随着日志的打印，发现老是在重复读取数据，看了看配置没发现任何问题，并且<code>/opt/logstash/cache/.jdbc_last_run</code>里序列化的值，难道是logstash出bug了？</p>
+<p>一顿Google后才知道原来坑在<code>tracking_column</code>上，<code>tracking_column</code>这个配置默认只认识小写的值，也就是说我配置的<code>ID</code>对logstash来说根本不认识，除非将<code>lowercase_column_names</code>的值置为<code>false</code>，但是这两点在官方文档上都没有说明。。。。。坑啊。。。。</p>
+<p>修改成小写后重新运行，发现总算是运行正常，<code>/opt/logstash/cache/.jdbc_last_run</code>里的<code>id</code>值也在改变，看上去非常的完美</p>
+<h2 id="id产生的问题"><a href="#id产生的问题" class="headerlink" title="id产生的问题"></a>id产生的问题</h2><p>结果到了第二天，发现根本没有任何数据生成，这是为什么呢？也没有任何报错，哪里又出bug了？</p>
+<p>在查看了<code>/opt/logstash/cache/.jdbc_last_run</code>的值之后发现是一个很大的<code>id</code>值，通过where条件的值来看，只有大于这个<code>id</code>的值才会有数据输出，那可不是没数据嘛。。。。</p>
+<p>那看来对于这种需要每天查询不同数据库的情况来说，用<code>id</code>来做游标进行偏移并不可取，所以想到通过时间来进行偏移，这样就不用担心这个问题了</p>
+<h2 id="最终的结果"><a href="#最终的结果" class="headerlink" title="最终的结果"></a>最终的结果</h2><p>所以，最终的配置如下，总算是完美的跑起来了。。。。</p>
+<pre class=" language-text"><code class="language-text">input {
+    jdbc {
+        jdbc_driver_library => "/opt/logstash/sqljdbc_10.2/chs/mssql-jdbc-10.2.0.jre8.jar"
+        jdbc_driver_class => "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+        jdbc_connection_string => "jdbc:sqlserver://server:1433;databasename=database;encrypt=true;trustServerCertificate=true;"
+        jdbc_user => "user"
+        jdbc_password => "password"
+        jdbc_default_timezone => "Asia/Shanghai"
+        use_column_value => true
+        tracking_column => "time"
+        tracking_column_type => "timestamp"
+        record_last_run => true
+        schedule => "* * * * *"
+        last_run_metadata_path => "/opt/logstash/cache/.jdbc_last_run"
+        statement => "
+            declare @nexttime varchar(100);
+            declare @nowtime varchar(32);
+            declare @sql varchar(8000);
+            set @nowtime=(Select CONVERT(varchar(100), GETDATE(), 112));
+            set @sql='select * FROM [DBNAME.' + @nowtime + '] where time > ':sql_last_value' order by time ASC';
+            exec(@sql);
+        "
+    }
+}
+</code></pre>
 
                 
             </div>
@@ -456,7 +471,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Pod%E5%8D%87%E7%BA%A7%E5%92%8C%E5%9B%9E%E6%BB%9A/">https://blog.f4ct0r.top/2022/06/05/middleware/kubernetes/Pod%E5%8D%87%E7%BA%A7%E5%92%8C%E5%9B%9E%E6%BB%9A/</a>
+                    <a href="https://blog.f4ct0r.top/2022/06/06/middleware/elk/logstash_sql_last_run%E5%A1%AB%E5%9D%91/">https://blog.f4ct0r.top/2022/06/06/middleware/elk/logstash_sql_last_run%E5%A1%AB%E5%9D%91/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -494,8 +509,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/kubernetes/">
-                                    <span class="chip bg-color">kubernetes</span>
+                                <a href="/tags/logstash/">
+                                    <span class="chip bg-color">logstash</span>
                                 </a>
                             
                         </div>
@@ -539,49 +554,52 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2022/06/05/middleware/kubernetes/Kubernetes_CA%E7%AD%BE%E5%90%8D%E7%9A%84%E5%8F%8C%E5%90%91%E8%AE%A4%E8%AF%81/">
+                <a href="/2022/06/06/middleware/elk/logstash_sql_last_run%E5%A1%AB%E5%9D%91/">
                     <div class="card-image">
                         
-                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Kubernetes CA签名的双向认证">
                         
-                        <span class="card-title">Kubernetes CA签名的双向认证</span>
+                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="logstash_sql_last_run填坑">
+                        
+                        <span class="card-title">logstash_sql_last_run填坑</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            Pod的扩缩容
+                            
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-06-05
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-06
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/middleware/" class="post-category">
-                                    middleware
+                            <a href="/categories/logstash/" class="post-category">
+                                    logstash
                                 </a>
                             
-                            <a href="/categories/middleware/kubernetes/" class="post-category">
-                                    kubernetes
+                            <a href="/categories/logstash/middleware/" class="post-category">
+                                    middleware
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/kubernetes/">
-                        <span class="chip bg-color">kubernetes</span>
+                    <a href="/tags/logstash/">
+                        <span class="chip bg-color">logstash</span>
                     </a>
                     
                 </div>
@@ -595,18 +613,18 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/06/05/middleware/kubernetes/Pod%E6%89%A9%E5%AE%B9%E7%BC%A9%E5%AE%B9/">
+                <a href="/2022/06/05/middleware/kubernetes/kubernetes_proxy/">
                     <div class="card-image">
                         
-                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="Pod扩容缩容">
+                        <img src="/medias/covers/kubernetes.jpeg" class="responsive-img" alt="kubernetes proxy">
                         
-                        <span class="card-title">Pod扩容缩容</span>
+                        <span class="card-title">kubernetes proxy</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            Pod的扩缩容
+                            Kubernetes Proxy
                         
                     </div>
                     <div class="publish-info">
