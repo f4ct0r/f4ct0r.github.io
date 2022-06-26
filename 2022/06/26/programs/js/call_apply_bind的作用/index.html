@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="f4ct0r&#39;s Universe">
+    <meta name="keywords" content="call apply bind的作用, f4ct0r&#39;s Universe">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>f4ct0r&#39;s Universe</title>
+    <title>call apply bind的作用 | f4ct0r&#39;s Universe</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -194,12 +194,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/covers/javascript-illustration.png')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title"></h1>
+                    <h1 class="description center-align post-title">call apply bind的作用</h1>
                 </div>
             </div>
         </div>
@@ -313,12 +313,29 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/javascript/">
+                                <span class="chip bg-color">javascript</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/programming/" class="post-category">
+                                programming
+                            </a>
+                        
+                            <a href="/categories/programming/javascript/" class="post-category">
+                                javascript
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -327,7 +344,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-06-05
+                    2022-06-26
                 </div>
                 
 
@@ -336,7 +353,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    21
+                    450
                 </div>
                 
 
@@ -363,7 +380,71 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>title: 404<br>date: 1654389418196<br>type: “404”<br>layout: “404”<br>description: “Oops～，你找的页面被送往其他星球了:(“</p>
+                <h2 id="序"><a href="#序" class="headerlink" title="序"></a>序</h2><p><code>call</code>、<code>apply</code>、<code>bind</code>这三种都是用于改变this的指向，让默认的this转变为自己想要的指向</p>
+<h2 id="call"><a href="#call" class="headerlink" title="call"></a>call</h2><p><code>call</code>可以提供参数来改变<code>this</code>的指向，但是<code>call</code>会立即调用该函数</p>
+<pre class=" language-javascript"><code class="language-javascript">fun<span class="token punctuation">.</span><span class="token function">call</span><span class="token punctuation">(</span>thisArg<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span>
+
+<span class="token keyword">let</span> o <span class="token operator">=</span> <span class="token punctuation">{</span>
+    name<span class="token punctuation">:</span> <span class="token string">'f4ct0r'</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">function</span> <span class="token function">fn</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> b<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+fn<span class="token punctuation">.</span><span class="token function">call</span><span class="token punctuation">(</span>o<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>该函数调用时，由于修改了this的指向，所以并不指向window或global，而是指向对象o</p>
+<p>所以调用返回</p>
+<pre class=" language-javascript"><code class="language-javascript"><span class="token punctuation">{</span> name<span class="token punctuation">:</span> <span class="token string">'f4ct0r'</span> <span class="token punctuation">}</span>
+<span class="token number">3</span>
+</code></pre>
+<h2 id="apply"><a href="#apply" class="headerlink" title="apply"></a>apply</h2><p><code>apply</code>方法也可以改变<code>this</code>的指向，并且也是立即调用，不同的是该方法传递到函数内部的形参是数组形式</p>
+<pre class=" language-javascript"><code class="language-javascript">fun<span class="token punctuation">.</span><span class="token function">apply</span><span class="token punctuation">(</span>thisArg<span class="token punctuation">,</span> <span class="token punctuation">[</span>argArray<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">let</span> o <span class="token operator">=</span> <span class="token punctuation">{</span>
+    name<span class="token punctuation">:</span> <span class="token string">'f4ct0r'</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">function</span> <span class="token function">fn</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> b<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+fn<span class="token punctuation">.</span><span class="token function">apply</span><span class="token punctuation">(</span>o<span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>该函数调用时，由于修改了this的指向，所以并不指向window或global，而是指向对象o</p>
+<p>所以调用返回</p>
+<pre class=" language-javascript"><code class="language-javascript"><span class="token punctuation">{</span> name<span class="token punctuation">:</span> <span class="token string">'f4ct0r'</span> <span class="token punctuation">}</span>
+<span class="token number">3</span>
+</code></pre>
+<h2 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h2><p><code>bind</code>方法也可以改变<code>this</code>的指向，但该方法不是立即调用，而是仅将函数的<code>this</code>修改，并且返回一个由改变<code>this</code>指向和初始参数的原函数的拷贝</p>
+<pre class=" language-javascript"><code class="language-javascript">fun<span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span>thisArg<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">let</span> o <span class="token operator">=</span> <span class="token punctuation">{</span>
+    name<span class="token punctuation">:</span> <span class="token string">'f4ct0r'</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">function</span> <span class="token function">fn</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> b<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">let</span> newFn <span class="token operator">=</span> fn<span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span>o<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">newFn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>该函数调用时，由于修改了this的指向，所以并不指向window或global，而是指向对象o</p>
+<p>所以调用返回</p>
+<pre class=" language-javascript"><code class="language-javascript"><span class="token punctuation">{</span> name<span class="token punctuation">:</span> <span class="token string">'f4ct0r'</span> <span class="token punctuation">}</span>
+<span class="token number">3</span>
+</code></pre>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>三个函数都能改变<code>this</code>的指向</li>
+<li><code>call</code>和<code>apply</code>会立即调用函数，并改变<code>this</code>的指向</li>
+<li><code>call</code>传递<code>arg1 arg2</code>这样的参数，<code>apply</code>传递数组</li>
+<li><code>bind</code>不会立即调用函数，而是返回一个修改了<code>this</code>指向的原函数拷贝</li>
+</ol>
+<p>一般的应用场景：</p>
+<ul>
+<li><code>call</code>一般用于继承</li>
+<li><code>apply</code>一般用于参数为数组</li>
+<li><code>bind</code>一般用于异步调用的</li>
+</ul>
 
                 
             </div>
@@ -390,7 +471,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://blog.f4ct0r.top/404.html">https://blog.f4ct0r.top/404.html</a>
+                    <a href="https://blog.f4ct0r.top/2022/06/26/programs/js/call_apply_bind%E7%9A%84%E4%BD%9C%E7%94%A8/">https://blog.f4ct0r.top/2022/06/26/programs/js/call_apply_bind%E7%9A%84%E4%BD%9C%E7%94%A8/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -427,7 +508,11 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/javascript/">
+                                    <span class="chip bg-color">javascript</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -474,13 +559,12 @@
                 <i class="far fa-dot-circle"></i>&nbsp;本篇
             </div>
             <div class="card">
-                <a href="/404.html">
+                <a href="/2022/06/26/programs/js/call_apply_bind%E7%9A%84%E4%BD%9C%E7%94%A8/">
                     <div class="card-image">
                         
+                        <img src="/medias/covers/javascript-illustration.png" class="responsive-img" alt="call apply bind的作用">
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
+                        <span class="card-title">call apply bind的作用</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -491,17 +575,33 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-05
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-26
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            f4ct0r
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/programming/" class="post-category">
+                                    programming
+                                </a>
+                            
+                            <a href="/categories/programming/javascript/" class="post-category">
+                                    javascript
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
 
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/javascript/">
+                        <span class="chip bg-color">javascript</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
@@ -509,16 +609,15 @@
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/404.html">
+                <a href="/2022/06/26/programs/js/this%E7%9A%84%E6%8C%87%E5%90%91/">
                     <div class="card-image">
                         
+                        <img src="/medias/covers/javascript-illustration.png" class="responsive-img" alt="this的指向">
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
+                        <span class="card-title">this的指向</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -529,17 +628,32 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-05
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-26
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            f4ct0r
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/programming/" class="post-category">
+                                    programming
+                                </a>
+                            
+                            <a href="/categories/programming/javascript/" class="post-category">
+                                    javascript
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
-
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/javascript/">
+                        <span class="chip bg-color">javascript</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
