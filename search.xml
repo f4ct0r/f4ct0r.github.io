@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>文件头</title>
+      <link href="/2022/09/19/security/CTF/%E6%96%87%E4%BB%B6%E5%A4%B4/"/>
+      <url>/2022/09/19/security/CTF/%E6%96%87%E4%BB%B6%E5%A4%B4/</url>
+      
+        <content type="html"><![CDATA[<h2 id="文件头"><a href="#文件头" class="headerlink" title="文件头"></a>文件头</h2><ul><li>JPEG(jpg): FFD8FFE1</li><li>PNG(png): 89504E47</li><li>GIF(gif): 47494638</li><li>TIFF(tiff): 49492A00</li><li>Windows Bitmap(bmp): 424DC001</li><li>ZIP Archive(zip): 504B0304</li><li>RAR Archive(rar): 52617221</li><li>Adobe Photoshop(psd): 38425053</li><li>Rich Text Format(rtf): 7B5C727466</li><li>XML(xml): 3C3F786D6C</li><li>HTML(html): 68746D6C3E</li><li>Adobe Acrobat(pdf): 255044462D312E</li><li>Wave(wav): 57415645</li><li>Pcap(pcap): 4D3C2B1A</li><li>Gzip(gzip): 1F8B08</li><li>CAD(dwg): 41433130</li><li>Email(eml): 44656C69766572792D646174653A</li><li>Outlook Express(dbx): CFAD12FEC5FD746F</li><li>Outlook(pst): 2142444E</li><li>MS Word&#x2F;Excel(xls&#x2F;doc): D0CF11E0</li><li>MS Access(mdb): 5374616E64617264204A</li><li>WordPerfect(wpd): FF575043</li><li>Quicken(qdf): AC9EBD8F</li><li>Windows Password(wpd): E3828596</li><li>AVI (avi): 41564920</li><li>Real Audio(ram): 2E7261FD</li><li>Real Media(rm): 2E524D46</li><li>MPEG(mpg): 000001BA</li><li>Quicktime(mov): 6D6F6F76</li><li>Windows Media(asf): 3026B2758E66CF11</li><li>MIDI(mid): 4D546864</li><li>pyc(pyc): 03F30D0A</li><li>pyd(pyd): 4D5A9000</li><li>7z(7z): 377ABCAF271C</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> CTF </category>
+          
+          <category> MISC </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MISC </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>call apply bind的作用</title>
       <link href="/2022/06/26/programs/js/call_apply_bind%E7%9A%84%E4%BD%9C%E7%94%A8/"/>
       <url>/2022/06/26/programs/js/call_apply_bind%E7%9A%84%E4%BD%9C%E7%94%A8/</url>
